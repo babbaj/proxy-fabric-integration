@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "proxy-fabric-integration",
+  "version": "${version}",
+  "name": "proxy-fabric-integration",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/babbaj/proxy-fabric-integration"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/proxy-integration/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.babbaj.proxyintegration.ProxyIntegration"
+    ]
+  },
+  "mixins": [
+    "proxy-integration.mixin.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
