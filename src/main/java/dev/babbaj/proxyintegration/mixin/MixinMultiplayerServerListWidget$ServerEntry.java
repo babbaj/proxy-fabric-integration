@@ -49,16 +49,18 @@ public class MixinMultiplayerServerListWidget$ServerEntry {
 
     @Inject(method = "render", at = @At("RETURN"))
     private void postRender(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
-        for (int i = 0; i < row.checkboxes.length; i++) {
-            row.checkboxes[i].setPosition(x, y + 36);
-            row.checkboxes[i].render(context, mouseX, mouseY, tickDelta);
+        int offset = 0;
+        for (int i = 0; i < row.checkboxes().length; i++) {
+            row.checkboxes()[i].setPosition(x + offset, y + 36);
+            row.checkboxes()[i].render(context, mouseX, mouseY, tickDelta);
+            offset += row.checkboxes()[i].getWidth() + 2;
         }
     }
 
     @Inject(method = "mouseClicked", at = @At("RETURN"))
     private void postClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        for (int i = 0; i < row.checkboxes.length; i++) {
-            if (row.checkboxes[i].mouseClicked(mouseX, mouseY, button)) {
+        for (int i = 0; i < row.checkboxes().length; i++) {
+            if (row.checkboxes()[i].mouseClicked(mouseX, mouseY, button)) {
                 return;
             }
         }
@@ -66,8 +68,8 @@ public class MixinMultiplayerServerListWidget$ServerEntry {
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void fixArrowCheck(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        for (int i = 0; i < row.checkboxes.length; i++) {
-            if (row.checkboxes[i].mouseClicked(mouseX, mouseY, button)) {
+        for (int i = 0; i < row.checkboxes().length; i++) {
+            if (row.checkboxes()[i].mouseClicked(mouseX, mouseY, button)) {
                 cir.setReturnValue(true);
                 return;
             }
