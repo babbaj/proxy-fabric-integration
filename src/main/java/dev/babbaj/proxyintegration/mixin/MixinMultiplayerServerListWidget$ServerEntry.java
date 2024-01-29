@@ -57,17 +57,8 @@ public class MixinMultiplayerServerListWidget$ServerEntry {
         }
     }
 
-    @Inject(method = "mouseClicked", at = @At("RETURN"))
-    private void postClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        for (int i = 0; i < row.checkboxes().length; i++) {
-            if (row.checkboxes()[i].mouseClicked(mouseX, mouseY, button)) {
-                return;
-            }
-        }
-    }
-
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-    private void fixArrowCheck(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+    private void preClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         for (int i = 0; i < row.checkboxes().length; i++) {
             if (row.checkboxes()[i].mouseClicked(mouseX, mouseY, button)) {
                 cir.setReturnValue(true);
