@@ -1,6 +1,7 @@
 package dev.babbaj.proxyintegration.mixin;
 
 import dev.babbaj.proxyintegration.CheckboxRow;
+import dev.babbaj.proxyintegration.CheckboxWithCallback;
 import dev.babbaj.proxyintegration.ProxyIp;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -29,18 +30,15 @@ public class MixinMultiplayerServerListWidget$ServerEntry {
     private void postInit(CallbackInfo ci) {
         ProxyIp originalIp = ProxyIp.parseIp(server.address).orElse(null);
         if (originalIp != null) {
-            CheckboxWidget[] widgets = ProxyIp.ALL_OPTIONS.stream().map(opt ->
-                    CheckboxWidget.builder(Text.of(opt.toLowerCase()), client.textRenderer)
-                            .checked(originalIp.options().contains(opt))
-                            .callback((cb, checked) -> {
-                                ProxyIp ip = ProxyIp.parseIp(server.address).orElseThrow(IllegalStateException::new);
-                                server.address = (checked ? ip.withOption(opt) : ip.withoutOption(opt)).toString();
-                                var entry = (MultiplayerServerListWidget.ServerEntry) (Object) this;
-                                entry.saveFile();
-                            })
-                            .pos(0, 0) // updated on render
-                            .build()
-                )
+            CheckboxWidget[] widgets = ProxyIp.ALL_OPTIONS.stream().map(opt -> {
+                    int width = client.textRenderer.getWidth(opt) + 24;
+                    return new CheckboxWithCallback(0, 0, width, 20, Text.of(opt), originalIp.options().contains(opt), checked -> {
+                        ProxyIp ip = ProxyIp.parseIp(server.address).orElseThrow(IllegalStateException::new);
+                        server.address = (checked ? ip.withOption(opt) : ip.withoutOption(opt)).toString();
+                        var entry = (MultiplayerServerListWidget.ServerEntry) (Object) this;
+                        entry.saveFile();
+                    });
+                })
                 .toArray(CheckboxWidget[]::new);
             this.row = new CheckboxRow(server, widgets);
         } else {
