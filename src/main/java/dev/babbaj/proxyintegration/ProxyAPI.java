@@ -48,9 +48,9 @@ public class ProxyAPI {
 
     private static boolean hasWireguardRouteWindoze() {
         try {
-            Process process = Runtime.getRuntime().exec("route print");
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                return reader.lines().anyMatch(l -> l.contains("192.168.69."));
+            Process process = Runtime.getRuntime().exec("powershell -Command \"(Get-NetRoute | Where-Object DestinationPrefix -Eq 192.168.69.0/24).Count\"");
+            try (InputStream stream = process.getInputStream()) {
+                return Integer.parseInt(new String(stream.readAllBytes())) > 0;
             }
         } catch (IOException e) {
             e.printStackTrace();
