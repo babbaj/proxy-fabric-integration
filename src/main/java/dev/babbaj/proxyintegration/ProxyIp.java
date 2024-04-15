@@ -1,5 +1,7 @@
 package dev.babbaj.proxyintegration;
 
+import com.google.common.collect.Streams;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.stream.Stream;
 
 public record ProxyIp(String account, List<String> options, String domain) {
     public static List<String> ALL_OPTIONS = List.of(
-            "spectate"
+            "spectate", "force"
     );
     public static Optional<ProxyIp> parseIp(String ip) {
         ip = ip.toLowerCase();
@@ -38,6 +40,6 @@ public record ProxyIp(String account, List<String> options, String domain) {
 
     @Override
     public String toString() {
-        return Stream.concat(Stream.concat(Stream.of(account), options.stream()), Stream.of(domain)).collect(Collectors.joining("."));
+        return Streams.concat(Stream.of(account), options.stream(), Stream.of(domain)).collect(Collectors.joining("."));
     }
 }

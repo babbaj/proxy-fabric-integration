@@ -2,5 +2,7 @@
 
 with pkgs;
 mkShell {
-  LD_LIBRARY_PATH="${with xorg; lib.makeLibraryPath [ libGL ]}";
+    shellHook = ''
+        export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${with xorg; lib.makeLibraryPath [ libGL ]}"
+    '';
 }

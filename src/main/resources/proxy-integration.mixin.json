@@ -3,6 +3,9 @@
   "package": "dev.babbaj.proxyintegration.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "IScreen",
+    "IMPScreen",
+    "MixinMultiplayerScreen",
     "MixinMultiplayerServerListWidget$ServerEntry",
     "MixinMultiplayerServerListWidget"
   ],
