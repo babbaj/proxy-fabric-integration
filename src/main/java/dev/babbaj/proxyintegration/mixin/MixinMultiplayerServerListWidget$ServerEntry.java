@@ -30,16 +30,14 @@ public class MixinMultiplayerServerListWidget$ServerEntry {
     private void postInit(CallbackInfo ci) {
         ProxyIp originalIp = ProxyIp.parseIp(server.address).orElse(null);
         if (originalIp != null) {
-            CheckboxWidget[] widgets = ProxyIp.ALL_OPTIONS.stream().map(opt -> {
-                    int width = client.textRenderer.getWidth(opt) + 24;
-                    return new CheckboxWithCallback(0, 0, width, 20, Text.of(opt), originalIp.options().contains(opt), checked -> {
-                        ProxyIp ip = ProxyIp.parseIp(server.address).orElseThrow(IllegalStateException::new);
-                        server.address = (checked ? ip.withOption(opt) : ip.withoutOption(opt)).toString();
-                        var entry = (MultiplayerServerListWidget.ServerEntry) (Object) this;
-                        entry.saveFile();
-                    });
+            CheckboxWidget[] widgets = ProxyIp.ALL_OPTIONS.stream().map(opt ->
+                new CheckboxWithCallback(0, 0, Text.of(opt), client.textRenderer, originalIp.options().contains(opt), (widget, checked) -> {
+                    ProxyIp ip = ProxyIp.parseIp(server.address).orElseThrow(IllegalStateException::new);
+                    server.address = (checked ? ip.withOption(opt) : ip.withoutOption(opt)).toString();
+                    var entry = (MultiplayerServerListWidget.ServerEntry) (Object) this;
+                    entry.saveFile();
                 })
-                .toArray(CheckboxWidget[]::new);
+            ).toArray(CheckboxWidget[]::new);
             this.row = new CheckboxRow(server, widgets);
         } else {
             this.row = new CheckboxRow(server, new CheckboxWidget[0]);

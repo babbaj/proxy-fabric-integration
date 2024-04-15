@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.gui.widget.AxisGridWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.text.Text;
@@ -37,11 +38,11 @@ public class MixinMultiplayerScreen {
     @Inject(method = "init",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/widget/GridWidget;refreshPositions()V"
+                    target = "Lnet/minecraft/client/gui/widget/DirectionalLayoutWidget;refreshPositions()V"
             ),
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private void addToRow(CallbackInfo ci, ButtonWidget buttonWidget, ButtonWidget buttonWidget2, ButtonWidget buttonWidget3, ButtonWidget buttonWidget4, GridWidget gridWidget, GridWidget.Adder adder, AxisGridWidget axisGridWidget, AxisGridWidget axisGridWidget2) {
+    private void addToRow(CallbackInfo ci, ButtonWidget buttonWidget, ButtonWidget buttonWidget2, ButtonWidget buttonWidget3, ButtonWidget buttonWidget4, DirectionalLayoutWidget directionalLayoutWidget, AxisGridWidget axisGridWidget, AxisGridWidget axisGridWidget2) {
         IScreen screen = ((IScreen) this);
         this.proxySyncButton = screen.addDrawableChild0(ButtonWidget.builder(Text.literal("Sync Proxy"), button -> {
             try {
@@ -66,7 +67,7 @@ public class MixinMultiplayerScreen {
         for (String account : result.accounts()) {
             if (!exists.contains(account)) {
                 String address = account + ".proxy." + result.domain();
-                list.add(new ServerInfo(account, address, false), false);
+                list.add(new ServerInfo(account, address, ServerInfo.ServerType.REALM), false);
             }
         }
         list.saveFile();

@@ -9,11 +9,11 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(MultiplayerServerListWidget.class)
 public class MixinMultiplayerServerListWidget {
 
-    @ModifyVariable(method = "<init>", argsOnly = true, at = @At(value = "LOAD", opcode = Opcodes.ILOAD), ordinal = 4)
+    @ModifyVariable(method = "<init>", argsOnly = true, at = @At(value = "LOAD", opcode = Opcodes.ILOAD), ordinal = 3)
     private static int modifyHeight(int h) {
         // 36 pixel original height
-        // 20 pixel height of checkboxes (17 in 1.20.4)
+        // 17 pixel height of checkboxes
         // 4 pixel extra padding
-        return 36 + 20 + 4;
+        return 36 + 17 + 4;
     }
 }
