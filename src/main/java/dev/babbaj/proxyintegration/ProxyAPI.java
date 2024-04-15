@@ -18,9 +18,9 @@ public class ProxyAPI {
 
     // TODO: async
     public static AccountList getActiveAccounts() throws IOException, InterruptedException {
-        String domain = hasWireguardRoute() ? "wg.redacted" : "redacted"; // public ip doesn't seem to work idk
+        String address = hasWireguardRoute() ? "http://192.168.69.1:6969" : "https://headlessapi.futureclient.gold";
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(URI.create("http://" + domain + ":6969/active")).build();
+        HttpRequest request = HttpRequest.newBuilder(URI.create(address + "/active")).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         String body = response.body();
         AccountList result = new Gson().fromJson(body, AccountList.class);
