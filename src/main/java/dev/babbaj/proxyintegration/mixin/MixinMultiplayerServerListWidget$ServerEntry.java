@@ -1,7 +1,6 @@
 package dev.babbaj.proxyintegration.mixin;
 
 import dev.babbaj.proxyintegration.CheckboxRow;
-import dev.babbaj.proxyintegration.CheckboxWithCallback;
 import dev.babbaj.proxyintegration.ProxyIp;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -9,6 +8,7 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.text.Text;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,8 +19,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MultiplayerServerListWidget.ServerEntry.class)
 public class MixinMultiplayerServerListWidget$ServerEntry {
+    @Final
     @Shadow
     private ServerInfo server;
+    @Final
     @Shadow
     private MinecraftClient client;
     @Unique
@@ -31,7 +33,7 @@ public class MixinMultiplayerServerListWidget$ServerEntry {
         ProxyIp originalIp = ProxyIp.parseIp(server.address).orElse(null);
         if (originalIp != null) {
             CheckboxWidget[] widgets = ProxyIp.ALL_OPTIONS.stream().map(opt ->
-                new CheckboxWithCallback(0, 0, Text.of(opt), client.textRenderer, originalIp.options().contains(opt), (widget, checked) -> {
+                new CheckboxWidget(0, 0, Text.of(opt), client.textRenderer, originalIp.options().contains(opt), (widget, checked) -> {
                     ProxyIp ip = ProxyIp.parseIp(server.address).orElseThrow(IllegalStateException::new);
                     server.address = (checked ? ip.withOption(opt) : ip.withoutOption(opt)).toString();
                     var entry = (MultiplayerServerListWidget.ServerEntry) (Object) this;
