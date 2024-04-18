@@ -2,10 +2,8 @@ package dev.babbaj.proxyintegration;
 
 import com.google.gson.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -16,7 +14,6 @@ public class ProxyAPI {
 
     public record AccountList(String domain, List<String> accounts) {}
 
-    // TODO: async
     public static AccountList getActiveAccounts() throws IOException, InterruptedException {
         String address = hasWireguardRoute() ? "http://192.168.69.1:6969" : "https://headlessapi.futureclient.gold";
         HttpClient client = HttpClient.newHttpClient();

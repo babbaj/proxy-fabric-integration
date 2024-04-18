@@ -2,12 +2,12 @@ package dev.babbaj.proxyintegration.mixin;
 
 import dev.babbaj.proxyintegration.ProxyAPI;
 import dev.babbaj.proxyintegration.ProxyIp;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.gui.widget.AxisGridWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
-import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,9 +20,13 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Mixin(MultiplayerScreen.class)
-public class MixinMultiplayerScreen {
+public class MixinMultiplayerScreen extends Screen {
     @Unique
     private ButtonWidget proxySyncButton;
+
+    protected MixinMultiplayerScreen(Text title) {
+        super(title);
+    }
 
     @ModifyArg(method = "init",
             at = @At(value = "INVOKE",
@@ -45,12 +49,14 @@ public class MixinMultiplayerScreen {
     private void addToRow(CallbackInfo ci, ButtonWidget buttonWidget, ButtonWidget buttonWidget2, ButtonWidget buttonWidget3, ButtonWidget buttonWidget4, DirectionalLayoutWidget directionalLayoutWidget, AxisGridWidget axisGridWidget, AxisGridWidget axisGridWidget2) {
         IScreen screen = ((IScreen) this);
         this.proxySyncButton = screen.addDrawableChild0(ButtonWidget.builder(Text.literal("Sync Proxy"), button -> {
-            try {
-                ProxyAPI.AccountList accounts = ProxyAPI.getActiveAccounts();
-                updateEntries((MultiplayerScreen) (Object) this, accounts);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            new Thread(() -> {
+                try {
+                    ProxyAPI.AccountList accounts = ProxyAPI.getActiveAccounts();
+                    this.executor.execute(() -> updateEntries((MultiplayerScreen) (Object) this, accounts));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }).start();
         }).width(100).build());
         axisGridWidget.add(this.proxySyncButton);
     }

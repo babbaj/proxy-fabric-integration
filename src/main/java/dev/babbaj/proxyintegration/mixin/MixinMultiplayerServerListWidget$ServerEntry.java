@@ -44,7 +44,6 @@ public class MixinMultiplayerServerListWidget$ServerEntry {
         } else {
             this.row = new CheckboxRow(server, new CheckboxWidget[0]);
         }
-
     }
 
     @Inject(method = "render", at = @At("RETURN"))
