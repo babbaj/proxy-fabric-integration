@@ -25,9 +25,14 @@ public class ProxyAPI {
     }
 
     private static boolean hasWireguardRoute() {
-        return System.getProperty("os.name").toLowerCase().startsWith("windows") ?
-                hasWireguardRouteWindoze()
-                : hasWireguardRouteLinux();
+        String name = System.getProperty("os.name").toLowerCase();
+        if (name.startsWith("windows")) {
+            return hasWireguardRouteWindoze();
+        } else if (name.startsWith("mac os")) {
+            return hasWireguardRouteMacos();
+        } else {
+            return hasWireguardRouteLinux();
+        }
     }
 
     private static boolean hasWireguardRouteLinux() {
@@ -39,6 +44,19 @@ public class ProxyAPI {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    private static boolean hasWireguardRouteMacos() {
+        try {
+            Process process = Runtime.getRuntime().exec("netstat -rn -f inet | grep -F 192.168.69");
+            try (InputStream stream = process.getInputStream()) {
+                // if there's a route we get some info, if not we get no output
+                return stream.read() != -1;
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
             return false;
         }
     }
